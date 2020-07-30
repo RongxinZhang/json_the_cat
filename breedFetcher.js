@@ -1,23 +1,28 @@
 const request = require('request');
 
-const getBreeds = function(breed) {
+const getBreeds = function(breed, cb) {
   let getBreedUrl = `https://api.thecatapi.com/v1/breeds/search?q=${breed}`;
+
   request(getBreedUrl, (resErr, res, body)=>{
     
     if (resErr) {
-      return resErr;
+      cb(resErr, null);
     }
 
     try {
       const data = JSON.parse(body);
-      if (data.length < 1) {
-        return console.log("NO DATA");
+      if (data.length > 0) {
+        cb(null, data[0].description);
       }
-      return data;
     } catch (error) {
-      return error;
+      cb(error, null);
     }
   });
 };
 
-getBreeds("sib");
+getBreeds("Siberian", (err, res)=>{
+  console.log(err, res);
+});
+
+
+module.exports = { getBreeds };
